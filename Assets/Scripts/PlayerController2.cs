@@ -31,6 +31,7 @@ public class PlayerController2 : MonoBehaviour
     // Kinematic rigidbody
     void OnTriggerEnter(Collider col)
     {
+        //collision.text = col.gameObject.name;
         // Adds point
         if (col.gameObject.name == "Point Collider")
         {
