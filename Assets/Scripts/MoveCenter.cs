@@ -10,6 +10,7 @@ public class MoveCenter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        speed+=0.02f;
         if (move)
         {
             transform.position += transform.forward * speed * Time.deltaTime;
