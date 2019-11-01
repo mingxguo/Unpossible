@@ -1,25 +1,16 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &100100000
-Prefab:
-  m_ObjectHideFlags: 1
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications: []
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1801384024788032}
-  m_IsPrefabParent: 1
 --- !u!1 &1801384024788032
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4050403524429934}
   - component: {fileID: 114462757500385858}
+  - component: {fileID: 933414443}
   m_Layer: 0
   m_Name: Path
   m_TagString: Untagged
@@ -29,9 +20,10 @@ GameObject:
   m_IsActive: 1
 --- !u!4 &4050403524429934
 Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1801384024788032}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -42,9 +34,10 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114462757500385858
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1801384024788032}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -54,18 +47,24 @@ MonoBehaviour:
   editorData:
     _bezierPath:
       points:
-      - {x: -4.350084, y: -0.6192361, z: 0.36958665}
-      - {x: -4.3119984, y: -0.27224493, z: 2.7627096}
+      - {x: -6.086914, y: 0.6713867, z: -0.9140625}
+      - {x: -6.564453, y: 1.3657227, z: -0.39257812}
       - {x: -2.500093, y: 1.7315861, z: 2.2386506}
       - {x: 0.14839771, y: 1.7105651, z: 2.2219813}
       - {x: 2.7968912, y: 1.6895441, z: 2.205312}
       - {x: 4.16408, y: -0.44785511, z: 2.1293974}
       - {x: 4.3446193, y: -0.6192361, z: 0.36958665}
       - {x: 4.5251584, y: -0.7906171, z: -1.390224}
-      - {x: 3.2920637, y: 0.7694727, z: -2.9261537}
-      - {x: 0.77272415, y: 0.83640313, z: -3.0503848}
-      - {x: -1.7466154, y: 0.90333354, z: -3.1746159}
-      - {x: -4.3881693, y: -0.9662273, z: -2.0235362}
+      - {x: 2.037691, y: -1.6304011, z: -1.9404297}
+      - {x: 1.0992146, y: -1.5864558, z: -2.4794922}
+      - {x: 0.16073799, y: -1.5425105, z: -3.0185547}
+      - {x: 0.66552734, y: -1.2612305, z: -3.5039062}
+      - {x: -0.8623047, y: -1.1159668, z: -3.1914062}
+      - {x: -2.3901367, y: -0.9707031, z: -2.8789062}
+      - {x: -2.0205078, y: -1.0429688, z: -2.0078125}
+      - {x: -3.4697266, y: -0.2524414, z: -1.2890625}
+      - {x: -4.9189453, y: 0.53808594, z: -0.5703125}
+      - {x: -5.609375, y: -0.022949219, z: -1.4355469}
       isClosed: 1
       space: 0
       controlMode: 1
@@ -74,16 +73,16 @@ MonoBehaviour:
       bounds:
         m_Center: {x: 0.005727291, y: 0.5250117, z: -0.39030027}
         m_Extent: {x: 4.3562183, y: 1.1872373, z: 2.6691647}
-      rotation: {x: 0, y: 0, z: 0, w: 1}
-      scale: {x: 2.1736755, y: 2.1736755, z: 2.1736755}
       perAnchorNormalsAngle:
       - 0
       - 0
       - 0
       - 0
-      globalNormalsAngle: 69
+      - 0
+      - 0
+      globalNormalsAngle: 180
       flipNormals: 0
-    vertexPathUpToDate: 1
+    vertexPathUpToDate: 0
     vertexPathMaxAngleError: 0.3
     vertexPathMinVertexSpacing: 0
     showTransformTool: 1
@@ -104,3 +103,18 @@ MonoBehaviour:
     showNormalsHelpInfo: 0
     tabIndex: 0
   initialized: 1
+--- !u!114 &933414443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1801384024788032}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8475e796d0d8fce43b7d7f19a56b1bdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathCreator: {fileID: 114462757500385858}
+  endOfPathInstruction: 0
+  segment: {fileID: 5317243720636477624, guid: 49a3f75d527f29645843a2313a91665c, type: 3}

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerFollower2 : MonoBehaviour
 {
 
-    public CameraRotator player;
+    public Rotator player;
     public Transform center;
 
     // Start is called before the first frame update
