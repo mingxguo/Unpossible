@@ -23,7 +23,7 @@ public class CameraRotator : MonoBehaviour
     private void Start()
     {
         follower_position = follower.GetComponent<Transform>().position;
-        offset_local = new Vector3(1.5f, 0, 0);
+        offset_local = new Vector3(1.4f, 0, 0);
         ResetGlobalPosition();
         ResetGlobalRotation();
         Debug.Log(transform.position - follower_position);

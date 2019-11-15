@@ -7,14 +7,11 @@ using PathCreation;
 [ExecuteInEditMode]
 public class TubeGenerator : MonoBehaviour
 {
-    public PathCreator pathCreator;
     public EndOfPathInstruction endOfPathInstruction;
     public Object segment;
-
+    
     private GameObject tube;
-    private float distance = 0;
-   
-
+    
     private void OnEnable()
     {
         string name = "Tube";
@@ -40,14 +37,18 @@ public class TubeGenerator : MonoBehaviour
 
     private void GenerateTube()
     {
-        float length = pathCreator.path.length;
-        for(float distance = 0; distance < length; distance += 0.1f)
+        PathCreator path_creator = gameObject.GetComponent<PathCreator>();
+        if (path_creator != null)
         {
-            Vector3 position = pathCreator.path.GetPointAtDistance(distance, endOfPathInstruction);
-            Vector3 upward = pathCreator.path.GetDirectionAtDistance(distance, endOfPathInstruction);
-            Vector3 forward = pathCreator.path.GetNormalAtDistance(distance, endOfPathInstruction);
-            Quaternion rotation = Quaternion.LookRotation(forward, upward);
-            Instantiate(segment, position, rotation, tube.transform);
+            VertexPath path = path_creator.path;
+            for (float distance = 0; distance < path.length; distance += 0.1f)
+            {
+                Vector3 position = path.GetPointAtDistance(distance, endOfPathInstruction);
+                Vector3 upward = path.GetDirectionAtDistance(distance, endOfPathInstruction);
+                Vector3 forward = path.GetNormalAtDistance(distance, endOfPathInstruction);
+                Quaternion rotation = Quaternion.LookRotation(forward, upward);
+                Instantiate(segment, position, rotation, tube.transform);
+            }
         }
     }
 }
