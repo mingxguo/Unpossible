@@ -9,12 +9,14 @@ public class ObstacleGenerator : MonoBehaviour
     public GameObject[] obstacles;
     public EndOfPathInstruction endOfPathInstruction;
     public float NextDistance = 0;
+    public float DistanceGap = 20;
 
     private GameObject obstacles_object;
+    private string name;
+    public int cont = 1;
 
-    private void OnEnable()
+    private void GetParentObject()
     {
-        string name = "Obstacles";
         var generated_tranform = transform.Find(name);
         if (generated_tranform == null)
         {
@@ -33,12 +35,20 @@ public class ObstacleGenerator : MonoBehaviour
         if (path_creator != null)
         {
             VertexPath path = path_creator.path;
-            Vector3 position = path.GetPointAtDistance(NextDistance % path.length, endOfPathInstruction);
-            Vector3 upward = path.GetDirectionAtDistance(NextDistance % path.length, endOfPathInstruction);
-            Vector3 forward = path.GetNormalAtDistance(NextDistance % path.length, endOfPathInstruction);
+
+            if (NextDistance > path.length)
+            {
+                ++cont;
+                NextDistance = NextDistance % path.length;
+            }
+            name = "Obstacles" + cont;
+            GetParentObject();
+            Vector3 position = path.GetPointAtDistance(NextDistance, endOfPathInstruction);
+            Vector3 upward = path.GetDirectionAtDistance(NextDistance, endOfPathInstruction);
+            Vector3 forward = path.GetNormalAtDistance(NextDistance, endOfPathInstruction);
             Quaternion rotation = Quaternion.LookRotation(forward, upward);
             Instantiate(obstacles[index], position, rotation, obstacles_object.transform);
         }
-        NextDistance += 10;
+        NextDistance += DistanceGap;
     }
 }

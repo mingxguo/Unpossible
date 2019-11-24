@@ -8,7 +8,7 @@ public class CameraRotator : MonoBehaviour
 {
     public float RotateSpeed;
 
-    public PathFollower follower;
+    public Follower follower;
     public EndOfPathInstruction endOfPathInstruction;
     public PathCreator pathCreator;
     
@@ -33,8 +33,9 @@ public class CameraRotator : MonoBehaviour
 
     private void ResetGlobalPosition()
     {
-        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.distanceTravelled, endOfPathInstruction).normalized;
-        Vector3 normal = pathCreator.path.GetNormalAtDistance(follower.distanceTravelled, endOfPathInstruction);
+        if (pathCreator.path == null) Debug.Log("null");
+        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
+        Vector3 normal = pathCreator.path.GetNormalAtDistance(follower.DistanceTravelled, endOfPathInstruction);
         Vector3 r = Vector3.Cross(normal, tangent).normalized;
 
         basis = CreateBasis(normal, tangent, r);
@@ -45,7 +46,7 @@ public class CameraRotator : MonoBehaviour
 
     private void ResetGlobalRotation()
     {
-        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.distanceTravelled, endOfPathInstruction).normalized;
+        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
         Quaternion rotation = Quaternion.LookRotation(tangent, offset);
         transform.rotation = rotation;
     }
@@ -62,7 +63,7 @@ public class CameraRotator : MonoBehaviour
 
     public Vector3 GetDirection()
     {
-       return 2 * pathCreator.path.GetDirectionAtDistance(follower.distanceTravelled, endOfPathInstruction).normalized;
+       return 2 * pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
     }
     
     void Update()
@@ -70,7 +71,7 @@ public class CameraRotator : MonoBehaviour
         follower_position = follower.GetComponent<Transform>().position;
         follower_rotation = follower.GetComponent<Transform>().rotation;
         ResetGlobalPosition();
-        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.distanceTravelled, endOfPathInstruction).normalized;
+        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
 
         if (Input.GetKey("left"))
         {

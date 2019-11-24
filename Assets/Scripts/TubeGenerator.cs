@@ -11,19 +11,7 @@ public class TubeGenerator : MonoBehaviour
     public Object segment;
     
     private GameObject tube;
-    
-    private void OnEnable()
-    {
-        string name = "Tube";
-        var generated_tranform = transform.Find(name);
-        if(generated_tranform == null)
-        {
-            tube = Create(name, gameObject);
-            //Debug.Log("create tube");
-            GenerateTube();
-        }
-    }
-    
+   
     private GameObject Create(string name, GameObject parent)
     {
         var res = new GameObject(name);
@@ -35,12 +23,33 @@ public class TubeGenerator : MonoBehaviour
         return res;
     }
 
-    private void GenerateTube()
+    public void GenerateTube(bool file)
     {
+        string name = "Tube";
+        var generated_tranform = transform.Find(name);
+        if (generated_tranform != null)
+        {
+            DestroyImmediate(generated_tranform.gameObject);
+            Debug.Log("destroyed");
+        }
+        tube = Create(name, gameObject);
+        Debug.Log("create tube");
+        
         PathCreator path_creator = gameObject.GetComponent<PathCreator>();
         if (path_creator != null)
         {
-            VertexPath path = path_creator.path;
+            VertexPath path;
+            if (file)
+            {
+                BezierPath bp = path_creator.LoadPath();
+                path = new VertexPath(bp, transform);
+            }
+            else
+            {
+                path = path_creator.path;
+            }
+
+            Debug.Log("got path");
             for (float distance = 0; distance < path.length; distance += 0.1f)
             {
                 Vector3 position = path.GetPointAtDistance(distance, endOfPathInstruction);
