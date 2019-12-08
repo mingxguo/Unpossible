@@ -146,7 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathCreator: {fileID: 5947922132788122983}
   endOfPathInstruction: 0
-  Speed: 20
+  Speed: 10
   DistanceTravelled: 0
   Threshold: 50
 --- !u!135 &83342613
@@ -219,7 +219,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &187405106 stripped
 GameObject:
@@ -467,7 +467,7 @@ PrefabInstance:
     - target: {fileID: 7648648951373813368, guid: f85565064900eae44b93c30699ef4cc5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7648648951373813368, guid: f85565064900eae44b93c30699ef4cc5,
         type: 3}
@@ -644,7 +644,7 @@ Transform:
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1984398346
 MonoBehaviour:
@@ -727,7 +727,7 @@ PrefabInstance:
     - target: {fileID: 7219338901074416306, guid: 547fdc18db037a24b8003476408e1e7f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7219338901074416306, guid: 547fdc18db037a24b8003476408e1e7f,
         type: 3}
