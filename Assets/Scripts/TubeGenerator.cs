@@ -38,8 +38,8 @@ public class TubeGenerator : MonoBehaviour
         PathCreator path_creator = gameObject.GetComponent<PathCreator>();
         if (path_creator != null)
         {
-            VertexPath path;
-            if (file)
+            VertexPath path = path_creator.path;
+            /*if (file)
             {
                 BezierPath bp = path_creator.LoadPath();
                 path = new VertexPath(bp, transform);
@@ -47,7 +47,7 @@ public class TubeGenerator : MonoBehaviour
             else
             {
                 path = path_creator.path;
-            }
+            }*/
 
             Debug.Log("got path");
             for (float distance = 0; distance < path.length; distance += 0.1f)

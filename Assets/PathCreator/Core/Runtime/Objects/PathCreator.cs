@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 namespace PathCreation {
@@ -41,6 +43,34 @@ namespace PathCreation {
                 editorData.bezierPath = value;
             }
         }
+
+        /*
+        public void SavePathFile()
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Create(Application.persistentDataPath + "/saved_path.dat");
+            
+            bf.Serialize(file, bezierPath);
+            file.Close();
+        }
+
+        public BezierPath LoadPath()
+        {
+            if (File.Exists(Application.persistentDataPath + "/saved_path.dat"))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(Application.persistentDataPath + "/saved_path.dat", FileMode.Open);
+                BezierPath loaded = (BezierPath)bf.Deserialize(file);
+                file.Close();
+                return loaded;
+            }
+            else
+            {
+                Debug.Log(string.Format("File doesn't exist at path: {0}{1}", Application.persistentDataPath, "/saved_path.dat"));
+                return null;
+            }
+
+        }*/
 
         #region Internal methods
 

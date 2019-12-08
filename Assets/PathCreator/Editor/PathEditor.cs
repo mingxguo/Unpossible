@@ -177,6 +177,11 @@ namespace PathCreationEditor {
                         data.ResetBezierPath (creator.transform.position, in2DEditorMode);
                         EditorApplication.QueuePlayerLoopUpdate ();
                     }
+                    /*
+                    if (GUILayout.Button("Save Path"))
+                    {
+                        creator.SavePathFile();
+                    }*/
 
                     GUILayout.Space (inspectorSectionSpacing);
                 }
