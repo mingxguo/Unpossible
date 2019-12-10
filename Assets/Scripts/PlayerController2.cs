@@ -7,11 +7,12 @@ public class PlayerController2 : MonoBehaviour
 {
     
     public Text score_text;
-    public Text collision;
+    public Text timer_text;
     public GameObject game_over_ui;
     
     private int score;
     private Rigidbody rb;
+    private float timer;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +21,7 @@ public class PlayerController2 : MonoBehaviour
         Time.timeScale = 1f;
 
         score = 0;
+        timer = 0f;
         SetScoreText();
 
         rb = GetComponent<Rigidbody>();
@@ -50,7 +52,12 @@ public class PlayerController2 : MonoBehaviour
     {
         score_text.text = score.ToString();
     }
-
+    private void FixedUpdate()
+    {
+        int seconds = (int)(Time.timeSinceLevelLoad % 60f);
+        int milliseconds = (int)(Time.timeSinceLevelLoad * 100f) % 100;
+        timer_text.text = seconds.ToString("D2") + ":" + milliseconds.ToString("D2");
+    }
     void StopGame()
     {
         game_over_ui.SetActive(true);

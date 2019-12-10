@@ -219,7 +219,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &187405106 stripped
 GameObject:
@@ -429,6 +429,36 @@ PrefabInstance:
       propertyPath: m_Name
       value: TextCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921193, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_Text
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921193, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921193, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_FontData.m_MinSize
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921193, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.6792453
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921193, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.66322535
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921193, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.66322535
+      objectReference: {fileID: 0}
     - target: {fileID: 7648648951373813368, guid: f85565064900eae44b93c30699ef4cc5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -533,6 +563,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921198, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 250.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921198, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7648648951232921199, guid: f85565064900eae44b93c30699ef4cc5,
+        type: 3}
+      propertyPath: m_Name
+      value: Timer
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f85565064900eae44b93c30699ef4cc5, type: 3}
@@ -659,7 +704,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   score_text: {fileID: 734660123}
-  collision: {fileID: 784895119}
+  timer_text: {fileID: 784895119}
   game_over_ui: {fileID: 187405106}
 --- !u!54 &1984398347
 Rigidbody:
@@ -727,7 +772,7 @@ PrefabInstance:
     - target: {fileID: 7219338901074416306, guid: 547fdc18db037a24b8003476408e1e7f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7219338901074416306, guid: 547fdc18db037a24b8003476408e1e7f,
         type: 3}
