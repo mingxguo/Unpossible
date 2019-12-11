@@ -22,7 +22,8 @@ public class CameraRotator : MonoBehaviour
 
     private void Start()
     {
-        RotateSpeed = SettingsMenu.rotate_speed_slider.value;
+        //RotateSpeed = SettingsMenu.rotate_speed_slider.value;
+        RotateSpeed = 200f;
         Debug.Log(RotateSpeed);
         follower_position = follower.GetComponent<Transform>().position;
         offset_local = new Vector3(1.4f, 0, 0);

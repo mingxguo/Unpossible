@@ -2,80 +2,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using PathCreation;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController: MonoBehaviour
 {
-
-    public float speed = 3f;
+    public GameObject level;
     public Text score_text;
-    public Text collision;
+    public Text timer_text;
     public GameObject game_over_ui;
-
-    private int track;
+    
     private int score;
+    private Rigidbody rb;
+    private float timer;
+    
+    int next_cont;
+    int next_half;
 
     // Start is called before the first frame update
     void Start()
     {
         game_over_ui.SetActive(false);
         Time.timeScale = 1f;
-        track = Random.Range(0, 2);
-        // Starts on the left track.
-        if (track == 0)
-        {
-            transform.position += new Vector3(-1.5f, 0, 0);
-        }
-        // Starts on the right track.
-        else
-        {
-            transform.position += new Vector3(1.5f, 0, 0);
-        }
+
         score = 0;
+        timer = 0f;
         SetScoreText();
 
-        Rigidbody rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.detectCollisions = true;
         GetComponent<Collider>().isTrigger = true;
+        next_cont = 0;
+        next_half = 1;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        transform.position += transform.forward * speed * Time.deltaTime;
-        // Changes from right track to left.
-        if (Input.GetKey("left") && track == 1)
-        {
-            track = 0;
-            transform.position += new Vector3(-3, 0, 0);
-        }
-        else if(Input.GetKey("right") && track == 0)
-        {
-            track = 1;
-            transform.position += new Vector3(3, 0, 0);
-        }
-    }
-
-    // Non kinematic rigidbody
-    void OnCollisionEnter(Collision col)
-    {
-        // Adds point
-        if (col.gameObject.name == "Point Collider")
-        {
-            ++score;
-            SetScoreText();
-            Destroy(col.gameObject.transform.parent.gameObject);
-        }
-        // Loses game.
-        else if (col.gameObject.name != "Road")
-        {
-            StopGame();
-        }
-    }
-
+    
     // Kinematic rigidbody
     void OnTriggerEnter(Collider col)
     {
+        //collision.text = col.gameObject.name;
         // Adds point
         if (col.gameObject.name == "Point Collider")
         {
@@ -83,21 +47,50 @@ public class PlayerController : MonoBehaviour
             SetScoreText();
             Destroy(col.gameObject.transform.parent.gameObject);
         }
+        else if(col.gameObject.name == "Middle")
+        {
+            next_half = 0;
+            ++next_cont;
+            UpdateObstacles();
+        }
+        else if(col.gameObject.name == "Origin")
+        {
+            next_half = 1;
+            UpdateObstacles();
+        }
+
         // Loses game.
-        else if (col.gameObject.name != "Road")
+        else
         {
             StopGame();
         }
-    }
+    }    
 
+    private void UpdateObstacles() {
+        string name = "Obstacles" + next_cont + next_half;
+        Debug.Log(name + "activated");
+        GameObject obstacles = level.transform.Find(name).gameObject;
+        if (obstacles != null)
+        {
+            obstacles.SetActive(true);
+        }
+    }
     void SetScoreText()
     {
         score_text.text = score.ToString();
     }
 
-    void StopGame()
+    private void FixedUpdate()
+    {
+        int seconds = (int)(Time.timeSinceLevelLoad % 60f);
+        int milliseconds = (int)(Time.timeSinceLevelLoad * 100f) % 100;
+        timer_text.text = seconds.ToString("D2") + ":" + milliseconds.ToString("D2");
+    }
+
+    public void StopGame()
     {
         game_over_ui.SetActive(true);
         Time.timeScale = 0f;
     }
+    
 }

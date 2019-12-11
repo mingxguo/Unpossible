@@ -12,10 +12,25 @@ public class ObstacleGenerator : MonoBehaviour
     public float DistanceGap = 20;
 
     private GameObject obstacles_object;
-    private string name;
     public int cont = 1;
+    private VertexPath path;
+    private float middle_point;
+    private int half;
 
-    private void GetParentObject()
+    private void OnEnable()
+    {
+        Debug.Log("start");
+        PathCreator path_creator = gameObject.GetComponent<PathCreator>();
+
+        if (path_creator != null)
+        {
+            path = path_creator.path;
+        }
+        middle_point = path.length / 2f;
+        half = 0;
+    }
+
+    private void GetParentObject(string name)
     {
         var generated_tranform = transform.Find(name);
         if (generated_tranform == null)
@@ -31,24 +46,27 @@ public class ObstacleGenerator : MonoBehaviour
 
     public void AddObstacle(int index)
     {
-        PathCreator path_creator = gameObject.GetComponent<PathCreator>();
-        if (path_creator != null)
+        if (NextDistance > path.length)
         {
-            VertexPath path = path_creator.path;
-
-            if (NextDistance > path.length)
-            {
-                ++cont;
-                NextDistance = NextDistance % path.length;
-            }
-            name = "Obstacles" + cont;
-            GetParentObject();
-            Vector3 position = path.GetPointAtDistance(NextDistance, endOfPathInstruction);
-            Vector3 upward = path.GetDirectionAtDistance(NextDistance, endOfPathInstruction);
-            Vector3 forward = path.GetNormalAtDistance(NextDistance, endOfPathInstruction);
-            Quaternion rotation = Quaternion.LookRotation(forward, upward);
-            Instantiate(obstacles[index], position, rotation, obstacles_object.transform);
+            ++cont;
+            NextDistance = NextDistance % path.length;
         }
+        if (NextDistance > middle_point)
+        {
+            half = 1;
+        }
+        else
+        {
+            half = 0;
+        }
+
+        string name = "Obstacles" + cont + half;
+        GetParentObject(name);
+        Vector3 position = path.GetPointAtDistance(NextDistance, endOfPathInstruction);
+        Vector3 upward = path.GetDirectionAtDistance(NextDistance, endOfPathInstruction);
+        Vector3 forward = path.GetNormalAtDistance(NextDistance, endOfPathInstruction);
+        Quaternion rotation = Quaternion.LookRotation(forward, upward);
+        Instantiate(obstacles[index], position, rotation, obstacles_object.transform);
         NextDistance += DistanceGap;
     }
 }
