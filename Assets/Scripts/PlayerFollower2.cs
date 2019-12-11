@@ -6,7 +6,6 @@ public class PlayerFollower2 : MonoBehaviour
 {
 
     public CameraRotator player;
-    public Transform center;
 
     // Start is called before the first frame update
     void Start()

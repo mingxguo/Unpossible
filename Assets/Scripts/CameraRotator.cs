@@ -6,7 +6,7 @@ using PathCreation.Examples;
 
 public class CameraRotator : MonoBehaviour
 {
-    public float RotateSpeed;
+    public static float RotateSpeed;
 
     public Follower follower;
     public EndOfPathInstruction endOfPathInstruction;
@@ -22,6 +22,8 @@ public class CameraRotator : MonoBehaviour
 
     private void Start()
     {
+        RotateSpeed = SettingsMenu.rotate_speed_slider.value;
+        Debug.Log(RotateSpeed);
         follower_position = follower.GetComponent<Transform>().position;
         offset_local = new Vector3(1.4f, 0, 0);
         ResetGlobalPosition();
@@ -63,7 +65,7 @@ public class CameraRotator : MonoBehaviour
 
     public Vector3 GetDirection()
     {
-       return 2 * pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
+       return pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
     }
     
     void Update()
