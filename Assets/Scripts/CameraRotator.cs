@@ -6,8 +6,6 @@ using PathCreation.Examples;
 
 public class CameraRotator : MonoBehaviour
 {
-    public static float RotateSpeed;
-
     public Follower follower;
     public EndOfPathInstruction endOfPathInstruction;
     public PathCreator pathCreator;
@@ -18,13 +16,14 @@ public class CameraRotator : MonoBehaviour
     private Quaternion follower_rotation;
     private Matrix4x4 basis;
 
+    private Gyroscope gyro;
+
     // Update is called once per frame
 
     private void Start()
     {
-        //RotateSpeed = SettingsMenu.rotate_speed_slider.value;
-        RotateSpeed = 200f;
-        Debug.Log(RotateSpeed);
+        //GameController.RotateSpeed = SettingsMenu.rotate_speed_slider.value;
+        Debug.Log(GameController.RotateSpeed);
         follower_position = follower.GetComponent<Transform>().position;
         offset_local = new Vector3(1.4f, 0, 0);
         ResetGlobalPosition();
@@ -32,6 +31,11 @@ public class CameraRotator : MonoBehaviour
         Debug.Log(transform.position - follower_position);
         //Matrix4x4 b = CreateBasis(new Vector3(1, 0, 1), new Vector3(3, -1, 0), new Vector3(2, 4, 2));
         //Debug.Log(BasisChangeWorldToLocal(Vector3.forward, b));
+
+
+        gyro = Input.gyro;
+        gyro.enabled = true;
+        Debug.Log("gyro: " + gyro.attitude);
     }
 
     private void ResetGlobalPosition()
@@ -76,16 +80,27 @@ public class CameraRotator : MonoBehaviour
         ResetGlobalPosition();
         Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
 
+        // Acelerator
+        //transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.acceleration.x);
+
+        // Gyroscope
+        // gyro acceleration : not working
+        // transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.gyro.userAcceleration.x);
+
+        transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.gyro.attitude.x);
+
+        tryAngles();
+
         if (Input.GetKey("left"))
         {
-            transform.RotateAround(follower_position, tangent, RotateSpeed * Time.deltaTime);
+            transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * Time.deltaTime);
             //transform.rotation = follower.GetComponent<Transform>().rotation;
             //RotateAroundPivot(transform, follower_position, follower_rotation);
         }
 
         else if (Input.GetKey("right"))
         {
-            transform.RotateAround(follower_position, tangent, -RotateSpeed * Time.deltaTime);
+            transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Time.deltaTime);
         }
         ResetGlobalRotation();
         offset = transform.position - follower_position;
@@ -112,6 +127,36 @@ public class CameraRotator : MonoBehaviour
     Vector3 BasisChangeLocalToWorld(Vector3 v, Matrix4x4 basis)
     {
         return basis.MultiplyPoint3x4(v);
+    }
+
+    private float getRoll()
+    {
+
+        Quaternion referenceRotation = new Quaternion(0, 0, 1, 0);
+        Quaternion deviceRotation = Input.gyro.attitude;
+        Quaternion eliminationOfXY = Quaternion.Inverse(
+            Quaternion.FromToRotation(referenceRotation * Vector3.forward,
+                                      deviceRotation * Vector3.forward)
+        );
+        Quaternion rotationZ = eliminationOfXY * deviceRotation;
+        float roll = rotationZ.eulerAngles.z;
+        Debug.Log("gyro: " + gyro.attitude + "\nRoll: " + roll);
+
+        return roll;
+    }
+
+    private void tryAngles()
+    {
+        Quaternion gyro = Input.gyro.attitude;
+        //gyro = Quaternion.Euler(gyro.eulerAngles + new Vector3(90, 0, 0));
+        Vector3 rot = gyro.eulerAngles;
+        rot.x = 0; //is X up while the phone is flat? Z is up in THIS game world.
+        rot.y = 0;
+        Quaternion aux = Quaternion.Euler(rot);//Quaternion.Lerp (transform.rotation, gyro, Time.time * 5);
+        Debug.Log("X: " + Input.gyro.rotationRateUnbiased.x + ", Y: " + Input.gyro.rotationRateUnbiased.y + ", Z: " + Input.gyro.rotationRateUnbiased.z);
+       // Debug.Log("X: " + gyro.eulerAngles.x + ", Y: " + gyro.eulerAngles.y + ", Z: " + gyro.eulerAngles.z);
+
+
     }
 }
 
