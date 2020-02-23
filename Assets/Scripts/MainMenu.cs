@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("start");
         SceneManager.LoadScene(1);
+        GameController.Instance.OnLevelStart();
     }
 
     public void Settings()
