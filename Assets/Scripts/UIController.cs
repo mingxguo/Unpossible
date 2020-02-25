@@ -24,15 +24,21 @@ public class UIController : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
-            score_text = GameObject.FindWithTag("score").GetComponent<Text>();
-            timer_text = GameObject.FindWithTag("timer").GetComponent<Text>();
-            game_over_ui = GameObject.FindWithTag("Finish");
-            game_over_ui.SetActive(false);
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    public void LoadUI()
+    {
+        score_text = GameObject.FindWithTag("score").GetComponent<Text>();
+        timer_text = GameObject.FindWithTag("timer").GetComponent<Text>();
+        game_over_ui = GameObject.FindWithTag("game_over");
+        Debug.Log(score_text == null);
+        Debug.Log(game_over_ui == null);
+        game_over_ui.SetActive(false);
     }
 
     public void SetScoreText(int score)

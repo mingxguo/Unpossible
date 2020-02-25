@@ -10,9 +10,10 @@ public class GameController : MonoBehaviour
     private int obs_next_cont;
     private int obs_next_half;
 
-    public static float PlayerSpeed = 10f;
-    public static float RotateSpeed = 20f;
-    public static float PlayerSpeedThreshold = 15f;
+    public static float PlayerSpeed = 20f;
+    public static float RotateSpeed = 200f;
+    public static float PlayerSpeedThreshold = 20f;
+    public static bool GameOver = false;
 
     private static GameController _instance;
     public static GameController Instance {
@@ -27,6 +28,7 @@ public class GameController : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
+            SceneManager.sceneLoaded += OnSceneLoaded;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -35,13 +37,22 @@ public class GameController : MonoBehaviour
         }
     }
 
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(scene.name != "Main")
+        {
+            OnLevelStart();
+        }
+    }
+
     public void OnLevelStart()
     {
         // set game parameters
         player_score = 0;
-        obs_next_cont = 0;
+        obs_next_cont = 1;
         obs_next_half = 1;
-        // set ui text
+        // Set UI
+        UIController.Instance.LoadUI();
         UIController.Instance.SetScoreText(0);
         current_level = GameObject.FindWithTag("Level");
     }
@@ -71,10 +82,10 @@ public class GameController : MonoBehaviour
         // TODO: trigger event
         else
         {
-            UIController.Instance.GameOver();
+            //UIController.Instance.GameOver();
             Debug.Log("game over");
-            Time.timeScale = 0f;
-            //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            //GameOver = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             //OnLevelStart();
         }
     }
@@ -82,11 +93,11 @@ public class GameController : MonoBehaviour
     private void UpdateObstacles()
     {
         string name = "Obstacles" + obs_next_cont + obs_next_half;
-        Debug.Log(name + "activated");
-        GameObject obstacles = current_level.transform.Find(name).gameObject;
+        Transform obstacles = current_level.transform.Find(name);
         if (obstacles != null)
         {
-            obstacles.SetActive(true);
+            Debug.Log(name + " activated");
+            obstacles.gameObject.SetActive(true);
         }
     }
 
@@ -104,7 +115,7 @@ public class GameController : MonoBehaviour
     {
         if (PlayerSpeed < PlayerSpeedThreshold)
         {
-            PlayerSpeed += 0.01f;
+            PlayerSpeed += 0.001f;
         }
     }
 

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerFollower2 : MonoBehaviour
+public class PlayerFollower : MonoBehaviour
 {
 
-    public CameraRotator player;
+    public PlayerController player;
 
     // Start is called before the first frame update
     void Start()

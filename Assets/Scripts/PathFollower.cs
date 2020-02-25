@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Follower : MonoBehaviour
+public class PathFollower : MonoBehaviour
 {
     public GameObject level;
     public EndOfPathInstruction endOfPathInstruction;
@@ -17,23 +17,24 @@ public class Follower : MonoBehaviour
         if(path_creator == null) { Debug.Log("error"); }
         
         Debug.Log(GameController.PlayerSpeed);
-        DistanceTravelled = -10f;
         transform.position = path_creator.path.GetPointAtDistance(DistanceTravelled, endOfPathInstruction);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Update follower position
-        if (path_creator != null)
+        if (!GameController.GameOver)
         {
-            DistanceTravelled += GameController.PlayerSpeed * Time.deltaTime;
-            transform.position = path_creator.path.GetPointAtDistance(DistanceTravelled, endOfPathInstruction);
-            transform.rotation = path_creator.path.GetRotationAtDistance(DistanceTravelled, endOfPathInstruction);
-        }
+            //Update follower position
+            if (path_creator != null)
+            {
+                DistanceTravelled += GameController.PlayerSpeed * Time.deltaTime;
+                transform.position = path_creator.path.GetPointAtDistance(DistanceTravelled, endOfPathInstruction);
+                transform.rotation = path_creator.path.GetRotationAtDistance(DistanceTravelled, endOfPathInstruction);
+            }
 
-        //Update speed
-        GameController.Instance.UpdatePlayerSpeed();
-        
+            //Update speed
+            GameController.Instance.UpdatePlayerSpeed();
+        }
     }
 }

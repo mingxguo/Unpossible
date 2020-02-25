@@ -50,7 +50,7 @@ public class TubeGenerator : MonoBehaviour
             }*/
 
             Debug.Log("got path");
-            for (float distance = 0; distance < path.length; distance += 0.1f)
+            for (float distance = 0; distance < path.length; distance += 0.2f)
             {
                 Vector3 position = path.GetPointAtDistance(distance, endOfPathInstruction);
                 Vector3 upward = path.GetDirectionAtDistance(distance, endOfPathInstruction);
