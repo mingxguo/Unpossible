@@ -108,8 +108,28 @@ public class PlayerController : MonoBehaviour
             Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
 
             // Acelerator
-            transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.acceleration.x / 20f);
-            Debug.Log(Input.acceleration.x);
+            if (!GameController.Instance.IsTapControl())
+            {
+                transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.acceleration.x);
+            }
+            else
+            {
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+                    Vector2 pos = touch.position;
+                    // Left side of the screen
+                    if (pos.x < GameController.XResolution / 2)
+                    {
+                        transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Time.deltaTime);
+                    }
+                    // Right side of the screen
+                    else
+                    {
+                        transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * Time.deltaTime);
+                    }
+                }
+            }
 
             // Gyroscope
             // gyro acceleration : not working
@@ -121,14 +141,12 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey("left"))
             {
-                transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * Time.deltaTime);
-                //transform.rotation = follower.GetComponent<Transform>().rotation;
-                //RotateAroundPivot(transform, follower_position, follower_rotation);
+                transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * 5f * Time.deltaTime);
             }
 
             else if (Input.GetKey("right"))
             {
-                transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Time.deltaTime);
+                transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * 5f * Time.deltaTime);
             }
             offset = transform.position - follower_position;
             offset_local = BasisChangeWorldToLocal(offset, basis);
@@ -182,7 +200,7 @@ public class PlayerController : MonoBehaviour
         rot.x = 0; //is X up while the phone is flat? Z is up in THIS game world.
         rot.y = 0;
         Quaternion aux = Quaternion.Euler(rot);//Quaternion.Lerp (transform.rotation, gyro, Time.time * 5);
-        Debug.Log("X: " + Input.gyro.rotationRateUnbiased.x + ", Y: " + Input.gyro.rotationRateUnbiased.y + ", Z: " + Input.gyro.rotationRateUnbiased.z);
+        //Debug.Log("X: " + Input.gyro.rotationRateUnbiased.x + ", Y: " + Input.gyro.rotationRateUnbiased.y + ", Z: " + Input.gyro.rotationRateUnbiased.z);
        // Debug.Log("X: " + gyro.eulerAngles.x + ", Y: " + gyro.eulerAngles.y + ", Z: " + gyro.eulerAngles.z);
 
 

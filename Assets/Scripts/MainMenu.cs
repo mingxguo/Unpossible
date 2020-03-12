@@ -11,6 +11,13 @@ public class MainMenu : MonoBehaviour
     public void StartLevel()
     {
         Debug.Log("start");
+        SceneManager.LoadScene(2);
+        GameController.Instance.OnLevelStart();
+    }
+
+    public void StartTutorial()
+    {
+        Debug.Log("start");
         SceneManager.LoadScene(1);
         GameController.Instance.OnLevelStart();
     }
