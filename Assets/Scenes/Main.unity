@@ -551,6 +551,16 @@ PrefabInstance:
       propertyPath: SettingsMenu
       value: 
       objectReference: {fileID: 4854744686514665763}
+    - target: {fileID: 44385745668405102, guid: 10008d3c2edfe8b4dbde529190ea0e83,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 459076086}
+    - target: {fileID: 44385745668405102, guid: 10008d3c2edfe8b4dbde529190ea0e83,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ConfirmUser
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10008d3c2edfe8b4dbde529190ea0e83, type: 3}
 --- !u!198 &285307236793860270

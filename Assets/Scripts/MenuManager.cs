@@ -110,4 +110,12 @@ public class MenuManager : MonoBehaviour
         SettingsMenu.SetActive(false);
         MainMenu.SetActive(true);
     }
+
+    public void ConfirmUser()
+    {
+        SessionMenu.SetActive(false);
+        MainMenu.SetActive(true);
+
+        // TODO: session
+    }
 }

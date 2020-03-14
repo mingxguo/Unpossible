@@ -8,18 +8,18 @@ public class GameController : MonoBehaviour
     private GameObject current_level;
     private PlayerController player;
 
+    private float start_position;
+    private float count_down;
+
     private int player_score;
     private int obs_next_cont;
-    private int obs_next_half;
-    private float start_position;
-    private float count_down = 200f;
-    private bool tap_control = true;
-    private bool dead = false;
+    private bool tap_control;
+    private bool dead;
 
-    public static float PlayerSpeed = 20f;
-    public static float RotateSpeed = 50f;
-    public static float PlayerSpeedThreshold = 25f;
+    private float player_speed;
+    private float rotate_speed;
 
+    private const float player_speed_threshold = 20f;
     public static int XResolution = 1920;
 
     private static GameController _instance;
@@ -50,37 +50,40 @@ public class GameController : MonoBehaviour
         {
             Debug.Log("scene loaded");
             player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+            current_level = GameObject.FindWithTag("Level");
+            UIController.Instance.LoadUI();
+            if (scene.name == "Tutorial")
+            {
+                count_down = 120;
+                start_position = -5f;
+            }
+            else
+            {
+                count_down = 300;
+                start_position = -20f;
+            }
             OnLevelStart();
         }
     }
 
     public void OnLevelStart()
     {
-        //player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        Debug.Log("start");
-        // set game parameters
+        // Set game parameters
         player_score = 0;        
         obs_next_cont = 1;
-        obs_next_half = 1;
-        // Set UI
-        UIController.Instance.LoadUI();
-        UIController.Instance.SetScoreText(0);
-        current_level = GameObject.FindWithTag("Level");
         dead = false;
+        tap_control = true;
 
-        if (SceneManager.GetActiveScene().name == "Tutorial")
-        {
-            count_down = 120;
-            start_position = -10f;
-        }
-        else
-        {
-            count_down = 300;
-            start_position = -25f;
-        }
+        player_speed = 15f;
+        rotate_speed = 50f;
+        // Set obstacles
+        ActivateNextObs(1, 0);
+        // Set UI
+        UIController.Instance.OnLevelStart();        
+        // Set player position
         player.SetStartPosition(start_position, new Vector3(1.5f, 0, 0));
     }
-
+    
     public void DetectedPlayerCollision(Collider col)
     {
         // Adds point
@@ -88,22 +91,21 @@ public class GameController : MonoBehaviour
         {
             ++player_score;
             UIController.Instance.SetScoreText(player_score);
-            Destroy(col.gameObject.transform.parent.gameObject);
+            //Destroy(col.gameObject.transform.parent.gameObject);
         }
         else if (col.gameObject.name == "Middle")
         {
-            obs_next_half = 0;
+            DeactivateCurrentObs(obs_next_cont, 0);
             ++obs_next_cont;
-            UpdateObstacles();
+            ActivateNextObs(obs_next_cont, 0);
         }
         else if (col.gameObject.name == "Origin")
         {
-            obs_next_half = 1;
-            UpdateObstacles();
+            DeactivateCurrentObs(obs_next_cont - 1, 1);
+            ActivateNextObs(obs_next_cont, 1);
         }
-
-        // Loses game.
-        // TODO: trigger event
+        
+        // TODO: trigger death event
         else
         {
             dead = true;
@@ -111,9 +113,20 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void UpdateObstacles()
+    private void DeactivateCurrentObs(int cont, int half)
     {
-        string name = "Obstacles" + obs_next_cont + obs_next_half;
+        string name = "Obstacles" + cont + half;
+        Transform obstacles = current_level.transform.Find(name);
+        if (obstacles != null)
+        {
+            Debug.Log(name + " deactivated");
+            obstacles.gameObject.SetActive(false);
+        }
+    }
+
+    private void ActivateNextObs(int cont, int half)
+    {
+        string name = "Obstacles" + cont + half;
         Transform obstacles = current_level.transform.Find(name);
         if (obstacles != null)
         {
@@ -122,26 +135,31 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void SetPlayerSpeed(float speed)
-    {
-        PlayerSpeed = speed;
-    }
-
     public float GetPlayerSpeed()
     {
-        return PlayerSpeed;
+        return player_speed;
+    }
+
+    public void SetPlayerSpeed(float speed)
+    {
+        player_speed = speed;
+    }
+    
+    public float GetRotateSpeed()
+    {
+        return rotate_speed;
     }
 
     public void SetRotateSpeed(float speed)
     {
-        RotateSpeed = speed;
+        rotate_speed = speed;
     }
 
     public void UpdatePlayerSpeed()
     {
-        if (PlayerSpeed < PlayerSpeedThreshold)
+        if (player_speed < player_speed_threshold)
         {
-            PlayerSpeed += 0.001f;
+            player_speed += 0.0005f;
         }
     }
 
@@ -175,8 +193,14 @@ public class GameController : MonoBehaviour
 
         dead = false;
 
+        // Reset obstacles
+        DeactivateCurrentObs(obs_next_cont, 0);
+        DeactivateCurrentObs(obs_next_cont, 1);
+        DeactivateCurrentObs(obs_next_cont - 1, 0);
+        DeactivateCurrentObs(obs_next_cont - 1, 1);
+
         // Restart level
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        OnLevelStart();
     }
 
     public void Update()
