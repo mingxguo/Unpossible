@@ -6,79 +6,70 @@ using PathCreation.Examples;
 
 public class PlayerController : MonoBehaviour
 {
-    public PathFollower follower;
-    public EndOfPathInstruction endOfPathInstruction;
-    public PathCreator pathCreator;
-    
+    private PathCreator level;
+    private GameObject follower;
+    private float distance;
+
     private Vector3 offset;
     private Vector3 offset_local;
-    private Vector3 leaning_offset;
-    private Vector3 follower_position;
-    private Quaternion follower_rotation;
-    private Matrix4x4 basis;
-
-    private Gyroscope gyro;
-    private Rigidbody rb;
-  
-
-    private void Start()
+    private Matrix4x4 current_basis;
+    
+    public void SetStartPosition(float d, Vector3 start_offset)
     {
-        //GameController.RotateSpeed = SettingsMenu.rotate_speed_slider.value;
-        Debug.Log(GameController.RotateSpeed);
-        follower_position = follower.GetComponent<Transform>().position;
-        offset_local = new Vector3(-1.5f,0, 0);
-        leaning_offset = new Vector3(1.5f, -0.3f, 0);
+        distance = d;
+        follower.transform.position = level.path.GetPointAtDistance(distance, EndOfPathInstruction.Loop);
+        offset_local = start_offset;
         ResetGlobalPosition();
         ResetGlobalRotation();
-        Debug.Log(transform.position - follower_position);
-        //Matrix4x4 b = CreateBasis(new Vector3(1, 0, 1), new Vector3(3, -1, 0), new Vector3(2, 4, 2));
-        //Debug.Log(BasisChangeWorldToLocal(Vector3.forward, b));
+    }
 
+    private void Awake()
+    {
+        follower = transform.parent.gameObject;
+        level = GameObject.FindWithTag("Level").GetComponent<PathCreator>();
+        //follower_position = follower.GetComponent<Transform>().position;
+        //offset_local = new Vector3(1.5f,0f, 0);
+        //ResetGlobalPosition();
+        //ResetGlobalRotation();
 
-        gyro = Input.gyro;
-        gyro.enabled = true;
-        Debug.Log("gyro: " + gyro.attitude);
-
-        // Rigidbody
-
-        rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true;
-        rb.detectCollisions = true;
+        // Set rigidbody and collision
+        GetComponent<Rigidbody>().isKinematic = true;
+        GetComponent<Rigidbody>().detectCollisions = true;
         GetComponent<Collider>().isTrigger = true;
     }
 
     // Kinematic rigidbody
     void OnTriggerEnter(Collider col)
     {
-        GameController.Instance.DetectedPlayerCollision(col);
+        //GameController.Instance.DetectedPlayerCollision(col);
     }
 
     private void ResetGlobalPosition()
     {
-        if (pathCreator.path == null) Debug.Log("null");
-        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
-        Vector3 normal = pathCreator.path.GetNormalAtDistance(follower.DistanceTravelled, endOfPathInstruction);
+        if (level.path == null) Debug.Log("null");
+        Vector3 tangent = level.path.GetDirectionAtDistance(distance, EndOfPathInstruction.Loop).normalized;
+        Vector3 normal = level.path.GetNormalAtDistance(distance, EndOfPathInstruction.Loop);
         Vector3 r = Vector3.Cross(normal, tangent).normalized;
 
-        basis = CreateBasis(normal, tangent, r);
-        offset = BasisChangeLocalToWorld(offset_local, basis);
+        current_basis = Createcurrent_basis(normal, tangent, r);
+        offset = current_basisChangeLocalToWorld(offset_local, current_basis);
 
-        transform.position = follower_position + offset;
+        transform.position = follower.transform.position + offset;
     }
 
     private void ResetGlobalRotation()
     {
-        Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
+        Vector3 tangent = level.path.GetDirectionAtDistance(distance, EndOfPathInstruction.Loop).normalized;
         Quaternion rotation = Quaternion.LookRotation(tangent, offset);
         transform.rotation = rotation;
 
         //get leaning
-        //Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
+        //Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, EndOfPathInstruction.Loop).normalized;
         //Vector3 r = Vector3.Cross(offset.normalized, tangent).normalized;
-        //basis = CreateBasis(offset.normalized, tangent, r);
-        //Vector3 leaning_up = BasisChangeLocalToWorld(leaning_offset, basis);
+        //current_basis = Createcurrent_basis(offset.normalized, tangent, r);
+        //Vector3 leaning_up = current_basisChangeLocalToWorld(leaning_offset, current_basis);
         //Vector3 leaning_offset_perp = new Vector3(-leaning_offset.y, leaning_offset.x, 0);
-        //Vector3 leaning_forw = BasisChangeLocalToWorld(leaning_offset_perp, basis);
+        //Vector3 leaning_forw = current_basisChangeLocalToWorld(leaning_offset_perp, current_basis);
         //Quaternion rotation = Quaternion.LookRotation(leaning_forw, leaning_up);
         //transform.rotation = rotation;
     }
@@ -95,23 +86,33 @@ public class PlayerController : MonoBehaviour
 
     public Vector3 GetDirection()
     {
-       return pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
+       return level.path.GetDirectionAtDistance(distance, EndOfPathInstruction.Loop).normalized;
     }
     
     void Update()
     {
-        if (!GameController.GameOver)
+        if (!GameController.Instance.PlayerIsDead())
         {
-            follower_position = follower.GetComponent<Transform>().position;
-            follower_rotation = follower.GetComponent<Transform>().rotation;
+
+            // Update follower position and rotation
+            distance += GameController.PlayerSpeed * Time.deltaTime;
+            follower.transform.position = level.path.GetPointAtDistance(distance, EndOfPathInstruction.Loop);
+            follower.transform.rotation = level.path.GetRotationAtDistance(distance, EndOfPathInstruction.Loop);
+
+            //Update speed
+            GameController.Instance.UpdatePlayerSpeed();
+
+            // Update player position
+            Vector3 follower_position = follower.transform.position;
             ResetGlobalPosition();
-            Vector3 tangent = pathCreator.path.GetDirectionAtDistance(follower.DistanceTravelled, endOfPathInstruction).normalized;
+            Vector3 tangent = level.path.GetDirectionAtDistance(distance, EndOfPathInstruction.Loop).normalized;
 
             // Acelerator
             if (!GameController.Instance.IsTapControl())
             {
-                transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.acceleration.x);
+                transform.RotateAround(follower.transform.position, tangent, -GameController.RotateSpeed * Input.acceleration.x);
             }
+            // Touch screen
             else
             {
                 if (Input.touchCount > 0)
@@ -121,24 +122,16 @@ public class PlayerController : MonoBehaviour
                     // Left side of the screen
                     if (pos.x < GameController.XResolution / 2)
                     {
-                        transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Time.deltaTime);
+                        transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * Time.deltaTime * 2);
                     }
                     // Right side of the screen
                     else
                     {
-                        transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * Time.deltaTime);
+                        transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Time.deltaTime * 2);
                     }
                 }
             }
-
-            // Gyroscope
-            // gyro acceleration : not working
-            // transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.gyro.userAcceleration.x);
-
-            //transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Input.gyro.attitude.x);
-
-            tryAngles();
-
+            // Keyboard
             if (Input.GetKey("left"))
             {
                 transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * 5f * Time.deltaTime);
@@ -148,62 +141,28 @@ public class PlayerController : MonoBehaviour
             {
                 transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * 5f * Time.deltaTime);
             }
+
+            // Update player rotation
             offset = transform.position - follower_position;
-            offset_local = BasisChangeWorldToLocal(offset, basis);
+            offset_local = current_basisChangeWorldToLocal(offset, current_basis);
             ResetGlobalRotation();
         }
     }
 
-
-    public static void RotateAroundPivot(Transform trans, Vector3 Pivot, Quaternion Angle)
-    {
-        Vector3 final = Angle * (trans.position - Pivot) + Pivot;
-        trans.position = final;
-    }
-
-    Matrix4x4 CreateBasis(Vector3 n, Vector3 t, Vector3 r)
+    Matrix4x4 Createcurrent_basis(Vector3 n, Vector3 t, Vector3 r)
     {
         return new Matrix4x4(n, t, r, new Vector4(0, 0, 0, 1));
     }
     // devolver las coordenadas del vector v en la base {n, t, r} (vectores columna)
-    Vector3 BasisChangeWorldToLocal(Vector3 v, Matrix4x4 basis)
+    Vector3 current_basisChangeWorldToLocal(Vector3 v, Matrix4x4 current_basis)
     {
-        Matrix4x4 inv = basis.inverse;
+        Matrix4x4 inv = current_basis.inverse;
         return inv.MultiplyPoint3x4(v);
     }
-    Vector3 BasisChangeLocalToWorld(Vector3 v, Matrix4x4 basis)
+    Vector3 current_basisChangeLocalToWorld(Vector3 v, Matrix4x4 current_basis)
     {
-        return basis.MultiplyPoint3x4(v);
+        return current_basis.MultiplyPoint3x4(v);
     }
-
-    private float getRoll()
-    {
-
-        Quaternion referenceRotation = new Quaternion(0, 0, 1, 0);
-        Quaternion deviceRotation = Input.gyro.attitude;
-        Quaternion eliminationOfXY = Quaternion.Inverse(
-            Quaternion.FromToRotation(referenceRotation * Vector3.forward,
-                                      deviceRotation * Vector3.forward)
-        );
-        Quaternion rotationZ = eliminationOfXY * deviceRotation;
-        float roll = rotationZ.eulerAngles.z;
-        Debug.Log("gyro: " + gyro.attitude + "\nRoll: " + roll);
-
-        return roll;
-    }
-
-    private void tryAngles()
-    {
-        Quaternion gyro = Input.gyro.attitude;
-        //gyro = Quaternion.Euler(gyro.eulerAngles + new Vector3(90, 0, 0));
-        Vector3 rot = gyro.eulerAngles;
-        rot.x = 0; //is X up while the phone is flat? Z is up in THIS game world.
-        rot.y = 0;
-        Quaternion aux = Quaternion.Euler(rot);//Quaternion.Lerp (transform.rotation, gyro, Time.time * 5);
-        //Debug.Log("X: " + Input.gyro.rotationRateUnbiased.x + ", Y: " + Input.gyro.rotationRateUnbiased.y + ", Z: " + Input.gyro.rotationRateUnbiased.z);
-       // Debug.Log("X: " + gyro.eulerAngles.x + ", Y: " + gyro.eulerAngles.y + ", Z: " + gyro.eulerAngles.z);
-
-
-    }
+    
 }
 
