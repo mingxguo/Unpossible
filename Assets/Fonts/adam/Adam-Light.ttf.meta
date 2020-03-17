@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: e4bb77a9b3b414a4eb45d153d974c195
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Adam
+  fontNames:
+  - Adam
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: a1dc51c547ed73e46bf18e4c298f373a, type: 3}
+  - {fileID: 12800000, guid: 0d3202695b4e02341a1953961926d73b, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

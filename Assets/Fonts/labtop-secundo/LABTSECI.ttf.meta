@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: fea0ecf1d327fb847956739563103961
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Labtop Secundo
+  fontNames:
+  - Labtop Secundo
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: e14c4fc2cb56c1c47994aacae8c8328f, type: 3}
+  - {fileID: 12800000, guid: 878a30051f9e0b14da5fa0e72da45ff0, type: 3}
+  - {fileID: 12800000, guid: c45fe47cdcbc98446a39ab7b4188055c, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
