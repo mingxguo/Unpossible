@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         follower = transform.parent.gameObject;
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
         level = GameObject.FindWithTag("Level").GetComponent<PathCreator>();
         //follower_position = follower.GetComponent<Transform>().position;
         //offset_local = new Vector3(1.5f,0f, 0);
@@ -41,9 +42,10 @@ public class PlayerController : MonoBehaviour
     // Kinematic rigidbody
     void OnTriggerEnter(Collider col)
     {
-        //GameController.Instance.DetectedPlayerCollision(col);
+        GameController.Instance.DetectedPlayerCollision(col);
     }
 
+    #region PRIVATE_FUNCTIONS
     private void ResetGlobalPosition()
     {
         if (level.path == null) Debug.Log("null");
@@ -73,7 +75,9 @@ public class PlayerController : MonoBehaviour
         //Quaternion rotation = Quaternion.LookRotation(leaning_forw, leaning_up);
         //transform.rotation = rotation;
     }
+    #endregion
 
+    #region GET
     public Vector3 GetPostion()
     {
         return transform.position;
@@ -88,14 +92,20 @@ public class PlayerController : MonoBehaviour
     {
        return level.path.GetDirectionAtDistance(distance, EndOfPathInstruction.Loop).normalized;
     }
-    
+
+    public float GetDistance()
+    {
+        return distance;
+    }
+    #endregion
+
     void Update()
     {
         if (!GameController.Instance.PlayerIsDead())
         {
 
             // Update follower position and rotation
-            distance += GameController.PlayerSpeed * Time.deltaTime;
+            distance += GameController.Instance.GetPlayerSpeed() * Time.deltaTime;
             follower.transform.position = level.path.GetPointAtDistance(distance, EndOfPathInstruction.Loop);
             follower.transform.rotation = level.path.GetRotationAtDistance(distance, EndOfPathInstruction.Loop);
 
@@ -110,7 +120,7 @@ public class PlayerController : MonoBehaviour
             // Acelerator
             if (!GameController.Instance.IsTapControl())
             {
-                transform.RotateAround(follower.transform.position, tangent, -GameController.RotateSpeed * Input.acceleration.x);
+                transform.RotateAround(follower.transform.position, tangent, -GameController.Instance.GetRotateSpeed() * Input.acceleration.x);
             }
             // Touch screen
             else
@@ -122,24 +132,24 @@ public class PlayerController : MonoBehaviour
                     // Left side of the screen
                     if (pos.x < GameController.XResolution / 2)
                     {
-                        transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * Time.deltaTime * 2);
+                        transform.RotateAround(follower_position, tangent, GameController.Instance.GetRotateSpeed() * Time.deltaTime * 2);
                     }
                     // Right side of the screen
                     else
                     {
-                        transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * Time.deltaTime * 2);
+                        transform.RotateAround(follower_position, tangent, -GameController.Instance.GetRotateSpeed() * Time.deltaTime * 2);
                     }
                 }
             }
             // Keyboard
             if (Input.GetKey("left"))
             {
-                transform.RotateAround(follower_position, tangent, GameController.RotateSpeed * 5f * Time.deltaTime);
+                transform.RotateAround(follower_position, tangent, GameController.Instance.GetRotateSpeed() * 5f * Time.deltaTime);
             }
 
             else if (Input.GetKey("right"))
             {
-                transform.RotateAround(follower_position, tangent, -GameController.RotateSpeed * 5f * Time.deltaTime);
+                transform.RotateAround(follower_position, tangent, -GameController.Instance.GetRotateSpeed() * 5f * Time.deltaTime);
             }
 
             // Update player rotation

@@ -9,8 +9,10 @@ public class UIController : MonoBehaviour
     private Text score_text;
     private Text timer_text;
     private Text countdown_text;
+    private Text death_countdown_text;
     private Button back_button;
     private GameObject game_over_ui;
+    private GameObject death_ui;
 
     private static UIController _instance;
     public static UIController Instance
@@ -34,20 +36,36 @@ public class UIController : MonoBehaviour
         }
     }
 
+    #region SET_UP
     public void LoadUI()
     {
         score_text = GameObject.FindWithTag("score").GetComponent<Text>();
         timer_text = GameObject.FindWithTag("timer").GetComponent<Text>();
         countdown_text = GameObject.FindWithTag("countdown").GetComponent<Text>();
+        death_ui = GameObject.FindWithTag("death");
         game_over_ui = GameObject.FindWithTag("game_over");
         back_button = GameObject.FindWithTag("back").GetComponent<Button>();
         back_button.onClick.AddListener(BackButton);
-        game_over_ui.SetActive(false);
     }
 
+    public void OnLevelStart()
+    {
+        if (game_over_ui != null)
+        {
+            game_over_ui.SetActive(false);
+        }
+        if (death_ui != null)
+        {
+            death_ui.SetActive(false);
+        }
+        SetScoreText(0);
+    }
+    #endregion
+
+    #region SET_TEXT
     public void SetScoreText(int score)
     {
-        score_text.text = score.ToString();
+        score_text.text = "Score: " + score.ToString();
     }
 
     public void SetTimerText()
@@ -61,14 +79,25 @@ public class UIController : MonoBehaviour
     {
         int seconds = (int)(time % 60f);
         int minutes = (int)(time / 60f);
-        countdown_text.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
+        countdown_text.text = "Time left: " + minutes.ToString("D2") + ":" + seconds.ToString("D2");
+    }
+
+    public void SetDeathCountdownText(float time)
+    {
+        death_ui.GetComponentInChildren<Text>().text = Mathf.Round(time).ToString();
+    }
+    #endregion
+
+    public void StartDeathCountdown()
+    {
+        death_ui.SetActive(true);
     }
 
     public void GameOver()
     {
         game_over_ui.SetActive(true);
     }
-
+    
     public void BackButton()
     {
         Debug.Log("Back pressed");

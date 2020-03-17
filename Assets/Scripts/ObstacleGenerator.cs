@@ -19,7 +19,7 @@ public class ObstacleGenerator : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("start");
+
         PathCreator path_creator = gameObject.GetComponent<PathCreator>();
 
         if (path_creator != null)

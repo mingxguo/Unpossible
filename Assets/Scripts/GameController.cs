@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour
 
     private int player_score;
     private int obs_next_cont;
-    private bool tap_control;
+    private bool tap_control = true;
     private bool dead;
 
     private float player_speed;
@@ -40,10 +40,11 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false); 
+            Destroy(gameObject);
         }
     }
 
+    #region SET_UP
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != "Main")
@@ -51,16 +52,22 @@ public class GameController : MonoBehaviour
             Debug.Log("scene loaded");
             player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
             current_level = GameObject.FindWithTag("Level");
+            if(current_level == null)
+            {
+                Debug.Log("level not found");
+            }
             UIController.Instance.LoadUI();
             if (scene.name == "Tutorial")
             {
+                SessionManager.Instance.LogTutorialStart();
                 count_down = 120;
                 start_position = -5f;
             }
             else
             {
+                SessionManager.Instance.LogExperimentStart();
                 count_down = 300;
-                start_position = -20f;
+                start_position = -30f;
             }
             OnLevelStart();
         }
@@ -75,7 +82,7 @@ public class GameController : MonoBehaviour
         tap_control = true;
 
         player_speed = 15f;
-        rotate_speed = 50f;
+        rotate_speed = 60f;
         // Set obstacles
         ActivateNextObs(1, 0);
         // Set UI
@@ -83,7 +90,33 @@ public class GameController : MonoBehaviour
         // Set player position
         player.SetStartPosition(start_position, new Vector3(1.5f, 0, 0));
     }
-    
+    #endregion
+
+    #region OBSTACLES
+    private void DeactivateCurrentObs(int cont, int half)
+    {
+        string name = "Obstacles" + cont + half;
+        Transform obstacles = current_level.transform.Find(name);
+        if (obstacles != null)
+        {
+            //Debug.Log(name + " deactivated");
+            obstacles.gameObject.SetActive(false);
+        }
+    }
+
+    private void ActivateNextObs(int cont, int half)
+    {
+        string name = "Obstacles" + cont + half;
+        Transform obstacles = current_level.transform.Find(name);
+        if (obstacles != null)
+        {
+            //Debug.Log(name + " activated");
+            obstacles.gameObject.SetActive(true);
+        }
+    }
+    #endregion
+
+    #region PLAYER_CONTROL
     public void DetectedPlayerCollision(Collider col)
     {
         // Adds point
@@ -91,7 +124,6 @@ public class GameController : MonoBehaviour
         {
             ++player_score;
             UIController.Instance.SetScoreText(player_score);
-            //Destroy(col.gameObject.transform.parent.gameObject);
         }
         else if (col.gameObject.name == "Middle")
         {
@@ -105,36 +137,41 @@ public class GameController : MonoBehaviour
             ActivateNextObs(obs_next_cont, 1);
         }
         
-        // TODO: trigger death event
         else
         {
             dead = true;
+            SessionManager.Instance.LogDeath(player.GetDistance(), player_score);
             StartCoroutine(DeathCountdownCoroutine());
         }
     }
 
-    private void DeactivateCurrentObs(int cont, int half)
+    IEnumerator DeathCountdownCoroutine()
     {
-        string name = "Obstacles" + cont + half;
-        Transform obstacles = current_level.transform.Find(name);
-        if (obstacles != null)
-        {
-            Debug.Log(name + " deactivated");
-            obstacles.gameObject.SetActive(false);
-        }
-    }
+        //Print the time of when the function is first called.
+        Debug.Log("Started death");
 
-    private void ActivateNextObs(int cont, int half)
-    {
-        string name = "Obstacles" + cont + half;
-        Transform obstacles = current_level.transform.Find(name);
-        if (obstacles != null)
-        {
-            Debug.Log(name + " activated");
-            obstacles.gameObject.SetActive(true);
-        }
-    }
+        UIController.Instance.StartDeathCountdown();
+        UIController.Instance.SetDeathCountdownText(3);
+        yield return new WaitForSeconds(1.0f);
+        UIController.Instance.SetDeathCountdownText(2);
+        yield return new WaitForSeconds(1.0f);
+        UIController.Instance.SetDeathCountdownText(1);
+        yield return new WaitForSeconds(1.0f);
 
+        dead = false;
+
+        // Reset obstacles
+        DeactivateCurrentObs(obs_next_cont, 0);
+        DeactivateCurrentObs(obs_next_cont, 1);
+        DeactivateCurrentObs(obs_next_cont - 1, 0);
+        DeactivateCurrentObs(obs_next_cont - 1, 1);
+
+        // Restart level
+        OnLevelStart();
+    }
+    #endregion
+
+    #region GAME_PARAMETERS
     public float GetPlayerSpeed()
     {
         return player_speed;
@@ -177,31 +214,7 @@ public class GameController : MonoBehaviour
     {
         return dead;
     }
-
-    IEnumerator DeathCountdownCoroutine()
-    {
-        //Print the time of when the function is first called.
-        Debug.Log("Started death");
-
-        UIController.Instance.StartDeathCountdown();
-        UIController.Instance.SetDeathCountdownText(3);
-        yield return new WaitForSeconds(1.0f);
-        UIController.Instance.SetDeathCountdownText(2);
-        yield return new WaitForSeconds(1.0f);
-        UIController.Instance.SetDeathCountdownText(1);
-        yield return new WaitForSeconds(1.0f);
-
-        dead = false;
-
-        // Reset obstacles
-        DeactivateCurrentObs(obs_next_cont, 0);
-        DeactivateCurrentObs(obs_next_cont, 1);
-        DeactivateCurrentObs(obs_next_cont - 1, 0);
-        DeactivateCurrentObs(obs_next_cont - 1, 1);
-
-        // Restart level
-        OnLevelStart();
-    }
+    #endregion
 
     public void Update()
     {
@@ -213,14 +226,14 @@ public class GameController : MonoBehaviour
                 // Tutorial ended
                 if (SceneManager.GetActiveScene().name == "Tutorial")
                 {
-                    Debug.Log("tutorial ended");
+                    SessionManager.Instance.LogTutorialEnd();
                     SceneManager.LoadScene(0);
                 }
                 else
                 {
+                    SessionManager.Instance.LogExperimentEnd();
                     UIController.Instance.GameOver();
                 }
-                // TODO: log event
             }
             // Player playing: global count down
             else if(!dead)

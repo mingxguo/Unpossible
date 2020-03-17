@@ -7,12 +7,6 @@ public class PlayerFollower : MonoBehaviour
 
     public PlayerController player;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        player.GetComponent<MeshRenderer>().enabled = false;
-    }
-
     // Update is called once per frame
     void LateUpdate()
     {
