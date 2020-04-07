@@ -132,12 +132,12 @@ public class PlayerController : MonoBehaviour
                     // Left side of the screen
                     if (pos.x < GameController.XResolution / 2)
                     {
-                        transform.RotateAround(follower_position, tangent, GameController.Instance.GetRotateSpeed() * Time.deltaTime * 2);
+                        transform.RotateAround(follower_position, tangent, GameController.Instance.GetRotateSpeed() * Time.deltaTime * 5);
                     }
                     // Right side of the screen
                     else
                     {
-                        transform.RotateAround(follower_position, tangent, -GameController.Instance.GetRotateSpeed() * Time.deltaTime * 2);
+                        transform.RotateAround(follower_position, tangent, -GameController.Instance.GetRotateSpeed() * Time.deltaTime * 5);
                     }
                 }
             }

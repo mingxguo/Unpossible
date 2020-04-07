@@ -14,12 +14,15 @@ public class GameController : MonoBehaviour
     private int player_score;
     private int obs_next_cont;
     private bool tap_control = true;
+    private bool developer_mode = false;
     private bool dead;
 
     private float player_speed;
     private float rotate_speed;
+    private float start_player_speed = 18f;
+    private float start_rotate_speed = 60f;
 
-    private const float player_speed_threshold = 20f;
+    private const float player_speed_threshold = 22f;
     public static int XResolution = 1920;
 
     private static GameController _instance;
@@ -79,10 +82,9 @@ public class GameController : MonoBehaviour
         player_score = 0;        
         obs_next_cont = 1;
         dead = false;
-        tap_control = true;
 
-        player_speed = 15f;
-        rotate_speed = 60f;
+        player_speed = start_player_speed;
+        rotate_speed = start_rotate_speed;
         // Set obstacles
         ActivateNextObs(1, 0);
         // Set UI
@@ -136,8 +138,8 @@ public class GameController : MonoBehaviour
             DeactivateCurrentObs(obs_next_cont - 1, 1);
             ActivateNextObs(obs_next_cont, 1);
         }
-        
-        else
+
+        else if(!developer_mode)
         {
             dead = true;
             SessionManager.Instance.LogDeath(player.GetDistance(), player_score);
@@ -177,9 +179,14 @@ public class GameController : MonoBehaviour
         return player_speed;
     }
 
-    public void SetPlayerSpeed(float speed)
+    public float GetStartPlayerSpeed()
     {
-        player_speed = speed;
+        return start_player_speed;
+    }
+
+    public void SetStartPlayerSpeed(float speed)
+    {
+        start_player_speed = speed;
     }
     
     public float GetRotateSpeed()
@@ -187,16 +194,25 @@ public class GameController : MonoBehaviour
         return rotate_speed;
     }
 
-    public void SetRotateSpeed(float speed)
+    public float GetStartRotateSpeed()
     {
-        rotate_speed = speed;
+        return start_rotate_speed;
+    }
+
+    public void SetStartRotateSpeed(float speed)
+    {
+        start_rotate_speed = speed;
     }
 
     public void UpdatePlayerSpeed()
     {
         if (player_speed < player_speed_threshold)
         {
-            player_speed += 0.0005f;
+            player_speed += 0.001f;
+        }
+        else
+        {
+            Debug.Log("threshold");
         }
     }
 
@@ -208,6 +224,16 @@ public class GameController : MonoBehaviour
     public void SetTapControl(bool b)
     {
         tap_control = b;
+    }
+
+    public bool IsDeveloperMode()
+    {
+        return developer_mode;
+    }
+
+    public void SetDeveloperMode(bool b)
+    {
+        developer_mode = b;
     }
 
     public bool PlayerIsDead()

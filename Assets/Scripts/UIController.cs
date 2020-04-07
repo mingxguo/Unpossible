@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -101,7 +100,7 @@ public class UIController : MonoBehaviour
     public void BackButton()
     {
         Debug.Log("Back pressed");
-        SceneManager.LoadScene(0);
+        SceneChanger.Instance.LoadScene(SceneChanger.MAIN);
     }
 
 }
