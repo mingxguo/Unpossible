@@ -10,7 +10,7 @@ public class MenuManager : MonoBehaviour
     public GameObject StartMenu;
     public GameObject SettingsMenu;
     public GameObject MainMenu;
-    public GameObject SessionMenu;
+    //public GameObject SessionMenu;
 
     #region SETTINGS_MENU
     private Slider player_speed_slider;
@@ -53,20 +53,20 @@ public class MenuManager : MonoBehaviour
         ErrorPanel.SetActive(false);
         SettingsMenu.SetActive(false);
         MainMenu.SetActive(false);
-        SessionMenu.SetActive(false);
+        //SessionMenu.SetActive(false);
         StartMenu.SetActive(false);
         Instructions1.SetActive(false);
         Instructions2.SetActive(false);
 
-        if (SessionManager.Instance.IsSessionInitialized())
-        {
-            MainMenu.SetActive(true);
-        }
-        else
-        {
-            StartMenu.SetActive(true);
-        }
-
+        //if (SessionManager.Instance.IsSessionInitialized())
+        //{
+        //    MainMenu.SetActive(true);
+        //}
+        //else
+        //{
+        //    StartMenu.SetActive(true);
+        //}
+        StartMenu.SetActive(true);
         //SceneChanger.Instance.FadeIn();
     }
 
@@ -74,7 +74,9 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         StartMenu.SetActive(false);
-        SessionMenu.SetActive(true);
+        //SessionMenu.SetActive(true);
+
+        Instructions1.SetActive(true);
     }
     #endregion
 
@@ -104,7 +106,7 @@ public class MenuManager : MonoBehaviour
     public void ChangeUser()
     {
         MainMenu.SetActive(false);
-        SessionMenu.SetActive(true);
+        //SessionMenu.SetActive(true);
     }
     #endregion
 
@@ -168,7 +170,7 @@ public class MenuManager : MonoBehaviour
         else
         {
             SceneChanger.Instance.FadeOut();
-            SessionMenu.SetActive(false);
+            //SessionMenu.SetActive(false);
             Instructions1.SetActive(true);
             Debug.Log("user: " + user_input.text);
             SessionManager.Instance.SetUser(user_input.text);

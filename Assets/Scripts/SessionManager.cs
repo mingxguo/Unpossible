@@ -3,16 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ServerEvents;
+using System.Runtime.InteropServices;
 
 public class SessionManager : MonoBehaviour
 {
 
     private string user_id = null;
     private ServerEventManager event_manager;
-    private const string url = "http://tfg.padaonegames.com/event";
+    private const string url = "https://intelligence-assessment-tfg.herokuapp.com";
     private const string game_name = "Unpossible";
 
     private const string DISTANCE = "DISTANCE";
+
+    [DllImport("__Internal")]
+    private static extern void LogGameEvent(string eventJSON);
+
+    [DllImport("__Internal")]
+    private static extern void GameOver();
+
     private static SessionManager _instance;
     public static SessionManager Instance
     {

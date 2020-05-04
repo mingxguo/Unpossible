@@ -45,6 +45,9 @@ public class UIController : MonoBehaviour
         game_over_ui = GameObject.FindWithTag("game_over");
         back_button = GameObject.FindWithTag("back").GetComponent<Button>();
         back_button.onClick.AddListener(BackButton);
+#if UNITY_WEBGL
+        back_button.gameObject.SetActive(false);
+#endif
     }
 
     public void OnLevelStart()
@@ -92,7 +95,7 @@ public class UIController : MonoBehaviour
         death_ui.SetActive(true);
     }
 
-    public void GameOver()
+    public void SetGameOverUI()
     {
         game_over_ui.SetActive(true);
     }

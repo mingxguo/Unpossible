@@ -16,13 +16,14 @@ public class GameController : MonoBehaviour
     private bool tap_control = true;
     private bool developer_mode = false;
     private bool dead;
+    private bool tutorial_complete = false;
 
     private float player_speed;
     private float rotate_speed;
-    private float start_player_speed = 18f;
+    private float start_player_speed = 18.2f;
     private float start_rotate_speed = 60f;
 
-    private const float player_speed_threshold = 22f;
+    private const float player_speed_threshold = 22.5f;
     public static int XResolution = 1920;
 
     private static GameController _instance;
@@ -50,7 +51,7 @@ public class GameController : MonoBehaviour
     #region SET_UP
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name != "Main")
+        if (scene.name != "Main" && scene.name != "Main Web")
         {
             Debug.Log("scene loaded");
             player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
@@ -62,13 +63,25 @@ public class GameController : MonoBehaviour
             UIController.Instance.LoadUI();
             if (scene.name == "Tutorial")
             {
+#if UNITY_WEBGL
+                WebSessionManager.Instance.LogTutorialStart();
+#endif
+
+#if UNITY_ANDROID
                 SessionManager.Instance.LogTutorialStart();
+#endif
                 count_down = 120;
                 start_position = -5f;
             }
             else
             {
+#if UNITY_WEBGL
+                WebSessionManager.Instance.LogExperimentStart();
+#endif
+
+#if UNITY_ANDROID
                 SessionManager.Instance.LogExperimentStart();
+#endif
                 count_down = 300;
                 start_position = -30f;
             }
@@ -142,7 +155,13 @@ public class GameController : MonoBehaviour
         else if(!developer_mode)
         {
             dead = true;
+#if UNITY_WEBGL
+            WebSessionManager.Instance.LogDeath(player.GetDistance(), player_score);
+#endif
+
+#if UNITY_ANDROID
             SessionManager.Instance.LogDeath(player.GetDistance(), player_score);
+#endif
             StartCoroutine(DeathCountdownCoroutine());
         }
     }
@@ -170,6 +189,21 @@ public class GameController : MonoBehaviour
 
         // Restart level
         OnLevelStart();
+    }
+
+    IEnumerator EndGame()
+    {
+
+        // Clean obstacles
+        DeactivateCurrentObs(obs_next_cont, 0);
+        DeactivateCurrentObs(obs_next_cont, 1);
+        DeactivateCurrentObs(obs_next_cont - 1, 0);
+        DeactivateCurrentObs(obs_next_cont - 1, 1);
+
+        UIController.Instance.SetGameOverUI();
+        yield return new WaitForSeconds(3.0f);
+
+        WebSessionManager.Instance.EndGame();
     }
     #endregion
 
@@ -240,11 +274,16 @@ public class GameController : MonoBehaviour
     {
         return dead;
     }
+
+    public bool IsTutorialCompleted()
+    {
+        return tutorial_complete;
+    }
     #endregion
 
     public void Update()
     {
-        if(SceneManager.GetActiveScene().name != "Main")
+        if(SceneManager.GetActiveScene().name != "Main" && SceneManager.GetActiveScene().name != "Main Web")
         {
             // General game over
             if(count_down < 0)
@@ -252,13 +291,27 @@ public class GameController : MonoBehaviour
                 // Tutorial ended
                 if (SceneManager.GetActiveScene().name == "Tutorial")
                 {
+#if UNITY_WEBGL
+                    WebSessionManager.Instance.LogTutorialEnd();
+#endif
+
+#if UNITY_ANDROID
                     SessionManager.Instance.LogTutorialEnd();
-                    SceneManager.LoadScene(0);
+#endif
+                    tutorial_complete = true;
+                    SceneChanger.Instance.LoadScene(SceneChanger.MAIN);
                 }
                 else
                 {
+#if UNITY_WEBGL
+                    WebSessionManager.Instance.LogExperimentEnd();
+#endif
+
+#if UNITY_ANDROID
                     SessionManager.Instance.LogExperimentEnd();
-                    UIController.Instance.GameOver();
+#endif
+                    enabled = false;
+                    StartCoroutine(EndGame());
                 }
             }
             // Player playing: global count down
@@ -269,4 +322,5 @@ public class GameController : MonoBehaviour
             }
         }
     }
+    
 }

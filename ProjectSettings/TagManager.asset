@@ -8,6 +8,9 @@ TagManager:
   - timer
   - Level
   - game_over
+  - countdown
+  - back
+  - death
   layers:
   - Default
   - TransparentFX
