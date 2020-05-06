@@ -20,10 +20,16 @@ public class GameController : MonoBehaviour
 
     private float player_speed;
     private float rotate_speed;
-    private float start_player_speed = 18.2f;
+    private float start_player_speed = 18.4f;
     private float start_rotate_speed = 60f;
 
-    private const float player_speed_threshold = 22.5f;
+    // extra variables
+    private long total_left_turn;
+    private long total_right_turn;
+    private long total_left_pressed;
+    private long total_right_pressed;
+
+    private const float player_speed_threshold = 21.85f;
     public static int XResolution = 1920;
 
     private static GameController _instance;
@@ -95,7 +101,10 @@ public class GameController : MonoBehaviour
         player_score = 0;        
         obs_next_cont = 1;
         dead = false;
-
+        total_left_pressed = 0;
+        total_left_turn = 0;
+        total_right_pressed = 0;
+        total_right_turn = 0;
         player_speed = start_player_speed;
         rotate_speed = start_rotate_speed;
         // Set obstacles
@@ -156,7 +165,8 @@ public class GameController : MonoBehaviour
         {
             dead = true;
 #if UNITY_WEBGL
-            WebSessionManager.Instance.LogDeath(player.GetDistance(), player_score);
+            WebSessionManager.Instance.LogDeath(player.GetDistance(), player_score, 
+            total_left_turn, total_right_turn, total_left_pressed, total_right_pressed);
 #endif
 
 #if UNITY_ANDROID
@@ -317,6 +327,22 @@ public class GameController : MonoBehaviour
             // Player playing: global count down
             else if(!dead)
             {
+                if (Input.GetKeyDown("left"))
+                {
+                    ++total_left_pressed;
+                }
+                else if (Input.GetKeyDown("right"))
+                {
+                    ++total_right_pressed;
+                }
+                if (Input.GetKey("left"))
+                {
+                    ++total_left_turn;
+                }
+                else if (Input.GetKey("right"))
+                {
+                    ++total_right_turn;
+                }
                 count_down -= Time.deltaTime;
                 UIController.Instance.SetCountdownText(count_down);
             }
